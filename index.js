@@ -1,0 +1,7 @@
+const express=require('express')
+console.log('hello world')
+const fs=require('fs')
+const data=fs.readFileSync('./data.txt','utf-8')
+console.log(data)
+const server=express()
+server.listen(3000)
