@@ -1,154 +1,89 @@
-// const http=require('http')
-
-//importing file system module
-// const fs=require('fs')
-// //reading the file (static file)
-// const indexhtml=fs.readFileSync('./index.html','utf-8')
-
-// // creating server
-// const server=http.createServer((req,res)=>{
-//     console.log('hariom')
-//     res.setHeader('Content-type','text.html')
-//     //sending the file
-//     res.end(indexhtml)
-// })
-
-// //port no
-// server.listen(8080)
-
-//json
-
-// const http=require('http')
-
+// const express=require('express')
 // const fs=require('fs')
 
-// //reading index.html file
-// const index=fs.readFileSync('./index.html','utf-8')
-
-// //data.json file
-// const data=fs.readFileSync('./data.json','utf-8')//blocking 
-// // console.log(data)
-
-
-// const server=http.createServer((req,res)=>{
-
-//     res.setHeader('Content-type','text/html')
-//     res.setHeader('Content-type','application.json')
-//    res.end(data)
-// })
-
-// server.listen(8080)
-
-//==============
-
-//web server using node js
-// const http=require('http')
-
-// const fs=require('fs')
-// const index=fs.readFileSync('./index.html','utf-8')
-// const data=fs.readFileSync('./data.json','utf-8')
-
-// const server=http.createServer((req,res)=>{
-//     console.log(req.url)
-//     switch(req.url){
-//         case '/':
-//             res.setHeader('Content-type','text/html')
-//             res.end(index)
-//             break;
-//         case '/api':
-//             res.setHeader('Content-type','application.json')
-//             res.end(data)
-//             break;
-//         default:
-//             res.writeHead(404,'Not found')
-//             res.end()
-//             break;
-//     }
-//     //here u wii get error (because u have sended response two time)
-//     // res.end(index)
-// })
-
-// server.listen(8080)
-
-
-// const http=require('http')
-// const fs=require('fs')
-
-// const index=fs.readFileSync('./index.html','utf-8')
 // const data=JSON.parse(fs.readFileSync('./data.json','utf-8'))
 
-// const product=data.products[0]
-// const server=http.createServer((req,res)=>{
-//     console.log(req.url)
-//     switch(req.url){
-//         case '/':
-//             res.setHeader('Content-type','text/html')
-//             res.end(index)
-//             break;
-//         case '/api':
-//             res.setHeader('Content-type','application.json')
-//             //server allways deals in string
-//             res.end(JSON.stringify(data))
-//             break;
-//         case '/product':
-//             res.setHeader('Content-type','text/html')
-//             let modifeIndex=index.replace('**name**',product.title)
-//                             .replace('**price**',`$${product.price}`)
-//                             .replace("**img**",product.images[0])
-//                             .replace('**discount**',`Save ${product.discountPercentage} with code DISCOUNT10`)
-//             res.end(modifeIndex)
-//             break;    
-//         default:
-//             res.writeHead(404,'Not found')
-//             res.end()
-//             break;
-//     }
+// const product=data.products
+
+// //creating a server
+// const server=express();
+
+// //get method use to fetch the data
+// server.get('/demo',(req,res)=>{
+//     //sending the data
+//     // res.send("<h1>hariom</h1>")
+//     //we can send the file//path must be absolute
+//     // res.sendFile('E:\BACKEND@2024\index.html')
+
+
+//     //sending json data
+//     res.json(product)
+    
+//     //we can send the sataus
+//     // res.sendStatus(200)
+
+//     //we can send the error
+//     // res.sendStatus(404)
 // })
 
-// server.listen(8080)//port number
 
+// //we can write the call back
+// server.listen(8080,()=>{
+//     console.log("server started")
+// })
 
-const http=require('http')
-
+const express=require('express')
 const fs=require('fs')
 
-const index=fs.readFileSync('./index.html','utf-8')
 const data=JSON.parse(fs.readFileSync('./data.json','utf-8'))
-
 const product=data.products
 
-const server=http.createServer((req,res)=>{
-    if(req.url.startsWith('/product')){
-        const id=req.url.split('/')[2]//second index
-        console.log(id,req.method)
-        //(+id) convering into number
-        const prd=product.find(p=>p.id==(+id))
-        // console.log(prd)
-        // console.log(arr)
-        // console.log(req.url)
-             res.setHeader('Content-type','text/html')
-            let modifeIndex=index.replace('**name**',prd.title)
-                            .replace('**price**',`$${prd.price}`)
-                            .replace("**img**",prd.images[0])
-                            .replace('**discount**',`Save ${prd.discountPercentage} with code DISCOUNT10`)
-            res.end(modifeIndex)  
-        // res.end(JSON.stringify(prd))  
-    }
-    // switch(req.url){
-    //     case '/':
-    //         res.setHeader('Content-type','text/html')
-    //         res.end(index)
-    //         break;
-    //     case '/api':
-    //          res.setHeader('Content-type','application.json')
-    //         //server allways deals in string
-    //         res.end(JSON.stringify(data))
-    //         break;
-    //     default:
-    //         res.setHeader('Content-type','text/html')
-    //         res.end(index)
-    //         break;
-    // }
+//creating a server
+const app=express()
+
+//middleware
+app.use((req,res,next)=>{
+
+    //logger
+    //request method
+    console.log(req.method ,req.ip,req.hostname,new Date(),req.get('User-agent'))
+    
+    //calling next
+    next()
 })
 
-server.listen(8080)
+//api -- endpoint
+//this is not rest api
+app.get('/',(req,res)=>{
+    res.json({type:'Get'})
+})
+
+app.post('/',(req,res)=>{
+    res.json({type:'Post'})
+})
+
+app.put('/',(req,res)=>{
+    res.json({type:'Put'})
+})
+
+app.patch('/',(req,res)=>{
+    res.json({type:'Patch'})
+})
+
+app.delete('/',(req,res)=>{
+    res.json({type:'delete'})
+})
+
+app.listen(8080,()=>{
+    console.log("server started")
+})
+
+/*
+Middleware functions are functions that have access to the request object (req),
+the response object (res), and the next function in the application’s request-response cycle
+//use of middleware
+Execute any code.
+Make changes to the request and the response objects.
+End the request-response cycle.
+Call the next middleware in the stack.
+*/
