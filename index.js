@@ -1,89 +1,23 @@
-// const express=require('express')
-// const fs=require('fs')
-
-// const data=JSON.parse(fs.readFileSync('./data.json','utf-8'))
-
-// const product=data.products
-
-// //creating a server
-// const server=express();
-
-// //get method use to fetch the data
-// server.get('/demo',(req,res)=>{
-//     //sending the data
-//     // res.send("<h1>hariom</h1>")
-//     //we can send the file//path must be absolute
-//     // res.sendFile('E:\BACKEND@2024\index.html')
-
-
-//     //sending json data
-//     res.json(product)
-    
-//     //we can send the sataus
-//     // res.sendStatus(200)
-
-//     //we can send the error
-//     // res.sendStatus(404)
-// })
-
-
-// //we can write the call back
-// server.listen(8080,()=>{
-//     console.log("server started")
-// })
-
+//model view controller
 const express=require('express')
-const fs=require('fs')
-
-const data=JSON.parse(fs.readFileSync('./data.json','utf-8'))
-const product=data.products
-
-//creating a server
 const app=express()
+const morgan = require('morgan')
+app.use(express.json())
+const products=require('./Controller/product')
+//creating routes
+const productRouter=express.Router()
 
-//middleware
-app.use((req,res,next)=>{
-
-    //logger
-    //request method
-    console.log(req.method ,req.ip,req.hostname,new Date(),req.get('User-agent'))
-    
-    //calling next
-    next()
-})
-
-//api -- endpoint
-//this is not rest api
-app.get('/',(req,res)=>{
-    res.json({type:'Get'})
-})
-
-app.post('/',(req,res)=>{
-    res.json({type:'Post'})
-})
-
-app.put('/',(req,res)=>{
-    res.json({type:'Put'})
-})
-
-app.patch('/',(req,res)=>{
-    res.json({type:'Patch'})
-})
-
-app.delete('/',(req,res)=>{
-    res.json({type:'delete'})
-})
+//attached to server
+app.use('/api-mv',productRouter)
+//create /product C R U D
+productRouter
+.post('/products',products.createProduct)
+.get('/products',products.getAllProducts)
+.get('/products/:id',products.getProduct)
+.put('/products/:id',products.replaceProduct)
+.patch('/products/:id',products.updateProduct)
+.delete('/products/:id',products.deleteProduct)
 
 app.listen(8080,()=>{
-    console.log("server started")
+    console.log("server is started")
 })
-
-/*
-Middleware functions are functions that have access to the request object (req),
-the response object (res), and the next function in the application’s request-response cycle
-//use of middleware
-Execute any code.
-Make changes to the request and the response objects.
-End the request-response cycle.
-Call the next middleware in the stack.
-*/
